@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D view Property</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pannellum/2.5.6/pannellum.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pannellum/2.5.6/pannellum.css" />
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+
+        #panorama {
+            width: 100vw;
+            height: 100vh;
+        }
+
+        .controls {
+            position: absolute;
+            top: 25px;
+            left: 70px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.9);
+            color: black;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Panorama Container -->
+    <div id="panorama"></div>
+
+    <!-- Controls -->
+    <div class="controls">
+        <button class="btn" onclick="toggleFullscreen()">Fullscreen</button>
+        <button class="btn" onclick="increaseZoom()">Zoom In</button>
+        <button class="btn" onclick="decreaseZoom()">Zoom Out</button>
+    </div>
+
+    <script>
+        var viewer = pannellum.viewer('panorama', {
+            type: "equirectangular",
+            panorama: "3D.jpg", // Replace with your panoramic image
+            autoLoad: true,
+            compass: false, // Compass not needed for top view
+            hfov: 50, // Lower HFOV for more zoom
+            hfovMin: 20, // Allow zooming in further
+            hfovMax: 100, // Limit zooming out
+            yaw: 0,
+            pitch: -90, // Fix the camera to look straight down
+            yawOnly: true, // Lock rotation to horizontal movement only
+            autoRotate: 0, // Initially, no auto-rotation
+            hotSpots: [
+                {
+                    pitch: -90,
+                    yaw: 30,
+                    type: "info",
+                    text: "Plot 1"
+                },
+                {
+                    pitch: -90,
+                    yaw: 60,
+                    type: "info",
+                    text: "Plot 2"
+                }
+            ]
+        });
+
+        // Toggle Fullscreen Mode
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        // Increase Zoom (Decrease HFOV)
+        function increaseZoom() {
+            let currentHfov = viewer.getHfov();
+            if (currentHfov > 20) { // Prevent zooming too much
+                viewer.setHfov(currentHfov - 5);
+            }
+        }
+
+        // Decrease Zoom (Increase HFOV)
+        function decreaseZoom() {
+            let currentHfov = viewer.getHfov();
+            if (currentHfov < 100) { // Prevent zooming out too much
+                viewer.setHfov(currentHfov + 5);
+            }
+        }
+    </script>
+
+</body>
+
+</html>
